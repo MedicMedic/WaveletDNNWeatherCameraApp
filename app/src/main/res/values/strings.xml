@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Note Analyzer</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="upload_button">Upload Image</string>
+    <string name="selected_clef">Selected Clef:</string>
+    <string name="selected_text">Selected Text:</string>
+    <string-array name="clef_array">
+        <item>G/Treble Clef</item>
+        <item>F/Bass Clef</item>
+        <item>A/Alto Clef</item>
+    </string-array>
+    <string-array name="key_array">
+        <item>C major/A minor</item>
+        <item>G major/E minor</item>
+        <item>D major/B minor</item>
+        <item>A major/F♯ minor</item>
+        <item>E major/C♯ minor</item>
+        <item>B major/G♯ minor</item>
+        <item>G♭ major/E♭ minor or F♯ major/D♯ minor</item>
+        <item>D♭ major/B♭ minor</item>
+        <item>A♭ major/F minor</item>
+        <item>E♭ major/C minor</item>
+        <item>B♭ major/G minor</item>
+        <item>F major/D minor</item>
+    </string-array>
+</resources>
