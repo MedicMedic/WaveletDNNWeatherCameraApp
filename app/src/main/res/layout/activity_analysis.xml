@@ -14,17 +14,26 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:scaleType="centerCrop"/>
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 
     <Button
-        android:id="@+id/upload_image_button"
+        android:id="@+id/read_notes_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/upload_button"
+        android:text="Read Notes"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ProgressBar
+        android:id="@+id/progress_loader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/read_notes_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/selected_clef"
