@@ -226,10 +226,10 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         // Determine which spinner triggered this method
         when (parent?.id) {
             R.id.clef_spinner -> {
-                val selectedClef = parent.getItemAtPosition(position).toString()
+                selectedClef = parent.getItemAtPosition(position).toString()
             }
             R.id.key_spinner -> {
-                val selectedKey = parent.getItemAtPosition(position).toString()
+                selectedKey = parent.getItemAtPosition(position).toString()
             }
         }
     }
