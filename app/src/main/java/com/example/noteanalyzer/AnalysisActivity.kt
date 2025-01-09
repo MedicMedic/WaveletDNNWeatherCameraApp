@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -22,8 +23,8 @@ class AnalysisActivity : AppCompatActivity() {
         setContentView(R.layout.activity_analysis)
 
         val imageUriString = intent.getStringExtra("image_uri")
-        val selectedClef = intent.getStringExtra("selected_clef")
-        val selectedKey = intent.getStringExtra("selected_key")
+        val selectedClef = intent.getStringExtra("selected_clef") ?: "Selected Clef: "
+        val selectedKey = intent.getStringExtra("selected_key") ?: "Selected Key: "
 
         val imageUri = Uri.parse(imageUriString)
 
@@ -36,6 +37,9 @@ class AnalysisActivity : AppCompatActivity() {
         val keyTextView: TextView = findViewById(R.id.selected_key)
         clefTextView.text = selectedClef
         keyTextView.text = selectedKey
+        Log.d("AnalysisActivity", "Clef Text: ${clefTextView.text}")
+        Log.d("AnalysisActivity", "Key Text: ${keyTextView.text}")
+
 
         val readNotesButton: Button = findViewById(R.id.read_notes_button)
         val progressLoader: ProgressBar = findViewById(R.id.progress_loader)

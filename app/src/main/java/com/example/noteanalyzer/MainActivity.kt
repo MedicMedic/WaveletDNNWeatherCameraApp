@@ -33,6 +33,8 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var cameraExecutor: ExecutorService
     private var selectedClef: String? = null
     private var selectedKey: String? = null
+    private lateinit var clefSpinner: Spinner
+    private lateinit var keySpinner: Spinner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +53,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         viewBinding.uploadImageButton.setOnClickListener { selectImageFromGallery() }
 
         //Set up spinners
-        val clefSpinner: Spinner = findViewById(R.id.clef_spinner)
+        clefSpinner = findViewById(R.id.clef_spinner)
         // Create an ArrayAdapter using the string array and a default spinner layout.
         ArrayAdapter.createFromResource(
             this,
@@ -63,7 +65,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             clefSpinner.adapter = adapter
         }
         clefSpinner.onItemSelectedListener = this
-        val keySpinner: Spinner = findViewById(R.id.key_spinner)
+        keySpinner = findViewById(R.id.key_spinner)
         // Create an ArrayAdapter using the string array and a default spinner layout.
         ArrayAdapter.createFromResource(
             this,
@@ -120,6 +122,9 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     val msg = "Photo capture succeeded: ${output.savedUri}"
                     Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
+
+                    selectedClef = clefSpinner.selectedItem.toString()
+                    selectedKey = keySpinner.selectedItem.toString()
 
                     val intent = Intent(this@MainActivity, AnalysisActivity::class.java).apply {
                         putExtra("image_uri", output.savedUri.toString())

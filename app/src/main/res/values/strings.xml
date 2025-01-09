@@ -3,7 +3,7 @@
     <string name="take_photo">Take Photo</string>
     <string name="upload_button">Upload Image</string>
     <string name="selected_clef">Selected Clef:</string>
-    <string name="selected_text">Selected Text:</string>
+    <string name="selected_key">Selected Key:</string>
     <string-array name="clef_array">
         <item>G/Treble Clef</item>
         <item>F/Bass Clef</item>
