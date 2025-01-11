@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "NoteAnalyzer"
 include(":app")
- 
+include(":opencv")

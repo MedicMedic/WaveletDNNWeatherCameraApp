@@ -11,6 +11,8 @@ material = "1.12.0"
 activity = "1.9.3"
 constraintlayout = "2.2.0"
 exifinterface = "1.4.0-alpha01"
+opencvAndroid = "4.5.5"
+opencvAndroidVersion = "5.0.0"
 
 [libraries]
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }
@@ -28,6 +30,8 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
+opencv-android = { module = "org.opencv:opencv-android", version.ref = "opencvAndroid" }
+opencv-android-v500 = { module = "org.opencv:opencv-android", version.ref = "opencvAndroidVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -4,6 +4,7 @@
     <string name="upload_button">Upload Image</string>
     <string name="selected_clef">Selected Clef:</string>
     <string name="selected_key">Selected Key:</string>
+    <string name="read_notes">Read Notes</string>
     <string-array name="clef_array">
         <item>G/Treble Clef</item>
         <item>F/Bass Clef</item>

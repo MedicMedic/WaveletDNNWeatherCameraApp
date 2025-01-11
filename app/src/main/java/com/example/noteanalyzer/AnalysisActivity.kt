@@ -14,6 +14,11 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
+import org.opencv.android.OpenCVLoader
+import org.opencv.android.Utils
+import org.opencv.core.CvType
+import org.opencv.core.Mat
+import org.opencv.imgproc.Imgproc
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -21,6 +26,14 @@ class AnalysisActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_analysis)
+
+        if (!OpenCVLoader.initDebug()) {
+            Log.e("OpenCV", "Initialization failed!")
+        } else {
+            Log.d("OpenCV", "OpenCV initialized successfully!")
+        }
+
+
 
         val imageUriString = intent.getStringExtra("image_uri")
         val selectedClef = intent.getStringExtra("selected_clef") ?: "Selected Clef: "
@@ -51,6 +64,9 @@ class AnalysisActivity : AppCompatActivity() {
 
             // Simulate processing with a delay
             Handler(Looper.getMainLooper()).postDelayed({
+                val grayscaleBitmap = bitmap?.let { convertToGrayscale(it) }
+                imageView.setImageBitmap(grayscaleBitmap) // Display the grayscale image
+
                 // Hide progress loader
                 progressLoader.visibility = ProgressBar.GONE
 
@@ -58,9 +74,8 @@ class AnalysisActivity : AppCompatActivity() {
                 readNotesButton.text = "Save and Return"
                 readNotesButton.isEnabled = true
 
-                // Update button action
                 readNotesButton.setOnClickListener {
-                    saveImageAndReturn(bitmap)
+                    saveImageAndReturn(grayscaleBitmap)
                 }
             }, 1000) // Simulate 1 second of processing
         }
@@ -131,5 +146,24 @@ class AnalysisActivity : AppCompatActivity() {
             // Return to the main menu
             finish()
         }
+    }
+    private fun convertToGrayscale(bitmap: Bitmap): Bitmap {
+        // Convert Bitmap to OpenCV Mat
+        val mat = Mat()
+        Utils.bitmapToMat(bitmap, mat)
+
+        // Convert the Mat to grayscale
+        val grayMat = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
+        Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_BGR2GRAY)
+
+        // Convert the grayscale Mat back to Bitmap
+        val grayBitmap = Bitmap.createBitmap(grayMat.cols(), grayMat.rows(), Bitmap.Config.ARGB_8888)
+        Utils.matToBitmap(grayMat, grayBitmap)
+
+        // Release resources
+        mat.release()
+        grayMat.release()
+
+        return grayBitmap
     }
 }
