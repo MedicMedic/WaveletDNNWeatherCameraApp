@@ -16,8 +16,10 @@ import android.provider.MediaStore
 import android.util.Log
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
+import org.opencv.core.Core
 import org.opencv.core.CvType
 import org.opencv.core.Mat
+import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -62,10 +64,10 @@ class AnalysisActivity : AppCompatActivity() {
             progressLoader.visibility = ProgressBar.VISIBLE
             readNotesButton.isEnabled = false
 
-            // Simulate processing with a delay
+            // Processing
             Handler(Looper.getMainLooper()).postDelayed({
-                val grayscaleBitmap = bitmap?.let { convertToGrayscale(it) }
-                imageView.setImageBitmap(grayscaleBitmap) // Display the grayscale image
+                val processedBitmap = bitmap?.let { preprocessImage(it) }
+                imageView.setImageBitmap(processedBitmap) // Display the image
 
                 // Hide progress loader
                 progressLoader.visibility = ProgressBar.GONE
@@ -75,7 +77,7 @@ class AnalysisActivity : AppCompatActivity() {
                 readNotesButton.isEnabled = true
 
                 readNotesButton.setOnClickListener {
-                    saveImageAndReturn(grayscaleBitmap)
+                    saveImageAndReturn(processedBitmap)
                 }
             }, 1000) // Simulate 1 second of processing
         }
@@ -147,7 +149,7 @@ class AnalysisActivity : AppCompatActivity() {
             finish()
         }
     }
-    private fun convertToGrayscale(bitmap: Bitmap): Bitmap {
+    private fun preprocessImage (bitmap: Bitmap): Bitmap {
         // Convert Bitmap to OpenCV Mat
         val mat = Mat()
         Utils.bitmapToMat(bitmap, mat)
@@ -156,14 +158,23 @@ class AnalysisActivity : AppCompatActivity() {
         val grayMat = Mat(mat.rows(), mat.cols(), CvType.CV_8UC1)
         Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_BGR2GRAY)
 
-        // Convert the grayscale Mat back to Bitmap
-        val grayBitmap = Bitmap.createBitmap(grayMat.cols(), grayMat.rows(), Bitmap.Config.ARGB_8888)
-        Utils.matToBitmap(grayMat, grayBitmap)
+        // Apply Gaussian Blur to reduce noise
+        val blurredMat = Mat()
+        Imgproc.GaussianBlur(grayMat, blurredMat, Size(5.0, 5.0), 0.0)
+
+        // Sharpening: Subtract blurred image from the original
+        val sharpenedMat = Mat()
+        Core.addWeighted(grayMat, 1.5, blurredMat, -0.5, 0.0, sharpenedMat)
+
+        // Convert the Mat back to Bitmap
+        val processedBitmap = Bitmap.createBitmap(sharpenedMat.cols(), sharpenedMat.rows(), Bitmap.Config.ARGB_8888)
+        Utils.matToBitmap(grayMat, processedBitmap)
 
         // Release resources
         mat.release()
         grayMat.release()
+        blurredMat.release()
 
-        return grayBitmap
+        return processedBitmap
     }
 }
