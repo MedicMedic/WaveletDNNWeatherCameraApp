@@ -19,8 +19,12 @@ import org.opencv.android.Utils
 import org.opencv.core.Core
 import org.opencv.core.CvType
 import org.opencv.core.Mat
+import org.opencv.core.Point
+import org.opencv.core.Scalar
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
+import org.opencv.core.MatOfPoint
+import org.opencv.core.TermCriteria
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -162,18 +166,47 @@ class AnalysisActivity : AppCompatActivity() {
         val blurredMat = Mat()
         Imgproc.GaussianBlur(grayMat, blurredMat, Size(5.0, 5.0), 0.0)
 
-        // Sharpening: Subtract blurred image from the original
+        // Apply adaptive thresholding
+        val thresholdedMat = Mat()
+        Imgproc.adaptiveThreshold(
+            blurredMat,
+            thresholdedMat,
+            255.0,
+            Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C,
+            Imgproc.THRESH_BINARY,
+            11,
+            2.0
+        )
+
+        // Sharpening
+        val kernel = Mat(3, 3, CvType.CV_32F).apply {
+            put(0, 0, 0.0, -1.0, 0.0)
+            put(1, 0, -1.0, 5.0, -1.0)
+            put(2, 0, 0.0, -1.0, 0.0)
+        }
         val sharpenedMat = Mat()
-        Core.addWeighted(grayMat, 1.5, blurredMat, -0.5, 0.0, sharpenedMat)
+        Imgproc.filter2D(thresholdedMat, sharpenedMat, -1, kernel)
+
+        // Apply Canny Edge Detection on the sharpened image
+        val edgesMat = Mat()
+        Imgproc.Canny(sharpenedMat, edgesMat, 50.0, 150.0)
+
+        // Invert image
+        val invertedMat = Mat()
+        Core.bitwise_not(edgesMat, invertedMat)
 
         // Convert the Mat back to Bitmap
-        val processedBitmap = Bitmap.createBitmap(sharpenedMat.cols(), sharpenedMat.rows(), Bitmap.Config.ARGB_8888)
-        Utils.matToBitmap(grayMat, processedBitmap)
+        val processedBitmap = Bitmap.createBitmap(invertedMat.cols(), invertedMat.rows(), Bitmap.Config.ARGB_8888)
+        Utils.matToBitmap(invertedMat, processedBitmap)
 
         // Release resources
         mat.release()
         grayMat.release()
         blurredMat.release()
+        thresholdedMat.release()
+        sharpenedMat.release()
+        edgesMat.release()
+        invertedMat.release()
 
         return processedBitmap
     }
