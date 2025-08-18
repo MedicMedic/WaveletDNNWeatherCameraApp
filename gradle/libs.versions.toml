@@ -13,6 +13,11 @@ constraintlayout = "2.2.0"
 exifinterface = "1.4.0-alpha01"
 opencvAndroid = "4.5.5"
 opencvAndroidVersion = "5.0.0"
+tensorflowLite = "2.14.0"
+litert = "1.2.0"
+tensorflowLiteSupport = "0.4.3"
+tensorflowLiteSupportVersion = "0.4.2"
+tensorflowLiteVersion = "2.9.0"
 
 [libraries]
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }
@@ -32,6 +37,12 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
 opencv-android = { module = "org.opencv:opencv-android", version.ref = "opencvAndroid" }
 opencv-android-v500 = { module = "org.opencv:opencv-android", version.ref = "opencvAndroidVersion" }
+tensorflow-lite = { module = "org.tensorflow:tensorflow-lite", version.ref = "tensorflowLite" }
+litert = { group = "com.google.ai.edge.litert", name = "litert", version.ref = "litert" }
+tensorflow-lite-gpu = { module = "org.tensorflow:tensorflow-lite-gpu", version.ref = "tensorflowLite" }
+tensorflow-lite-support = { module = "org.tensorflow:tensorflow-lite-support", version.ref = "tensorflowLiteSupport" }
+tensorflow-lite-support-v042 = { module = "org.tensorflow:tensorflow-lite-support", version.ref = "tensorflowLiteSupportVersion" }
+tensorflow-lite-v290 = { module = "org.tensorflow:tensorflow-lite", version.ref = "tensorflowLiteVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

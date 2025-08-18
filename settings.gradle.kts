@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "NoteAnalyzer"
+rootProject.name = "CloudWeather"
 include(":app")
 include(":opencv")

@@ -1,4 +1,4 @@
-package com.example.noteanalyzer
+package com.example.cloudweather
 
 import org.junit.Test
 

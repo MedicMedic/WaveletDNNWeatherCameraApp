@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.noteanalyzer"
+    namespace = "com.example.cloudweather"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.noteanalyzer"
+        applicationId = "com.example.cloudweather"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -58,5 +58,7 @@ dependencies {
 
     implementation (libs.androidx.camera.view)
     implementation (libs.androidx.camera.extensions)
+    implementation(libs.tensorflow.lite.v290)
+    implementation(libs.tensorflow.lite.support.v042)
     implementation(project(":opencv"))
 }
