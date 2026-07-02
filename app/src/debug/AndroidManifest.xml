@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Debug builds only: allow launching the analysis screen from adb so
+         the classification pipeline can be driven end-to-end in tests -->
+    <application>
+        <activity
+            android:name=".AnalysisActivity"
+            android:exported="true"
+            tools:replace="android:exported" />
+    </application>
+
+</manifest>
