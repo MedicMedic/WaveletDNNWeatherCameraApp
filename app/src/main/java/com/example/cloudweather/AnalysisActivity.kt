@@ -5,8 +5,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -22,11 +20,13 @@ import org.tensorflow.lite.Interpreter
 import java.io.FileInputStream
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
+import java.util.concurrent.Executors
 
 class AnalysisActivity : AppCompatActivity() {
     private val TAG = "AnalysisActivity"
     private var tfliteInterpreter: Interpreter? = null
     private var originalBitmap: Bitmap? = null
+    private val analysisExecutor = Executors.newSingleThreadExecutor()
 
     // Cloud type mapping (order = training class order: sorted folder names)
     private val cloudTypes = arrayOf("Ac", "As", "Cc", "Cs", "Ci", "Cb", "Cu", "Ns", "Sc", "St")
@@ -103,7 +103,8 @@ class AnalysisActivity : AppCompatActivity() {
             progressLoader.visibility = ProgressBar.VISIBLE
             analyzeCloudButton.isEnabled = false
 
-            Handler(Looper.getMainLooper()).postDelayed({
+            // Feature extraction + inference are heavy: keep them off the UI thread
+            analysisExecutor.execute {
                 // Preprocess exactly like training: grayscale, resize to
                 // 256x256, scale to [0,1], Gaussian blur 3x3 sigma 1
                 val pixels = originalBitmap?.let { preprocessImage(it) }
@@ -113,33 +114,36 @@ class AnalysisActivity : AppCompatActivity() {
 
                 Log.d(TAG, "Feature vector size: ${features?.size ?: 0}")
 
-                if (features == null || tfliteInterpreter == null) {
+                val result = if (features == null || tfliteInterpreter == null) {
                     Log.e(TAG, "Features empty or interpreter null")
-                    precipitationResultTextView.text = "ERROR"
-                    cloudTypeResultTextView.text = "ERROR"
+                    null
                 } else {
-                    val result = classifyCloud(features)
-                    if (result.precipClass < 0) {
+                    classifyCloud(features).takeIf { it.precipClass >= 0 }
+                }
+
+                runOnUiThread {
+                    if (isDestroyed) return@runOnUiThread
+                    if (result == null) {
                         precipitationResultTextView.text = "ERROR"
                         cloudTypeResultTextView.text = "ERROR"
                     } else {
-                        val cloudName = cloudNames[result.cloudType] ?: result.cloudType
-                        val precipDesc = precipDescriptions[result.precipClass] ?: "Unknown"
-                        precipitationResultTextView.text = precipDesc
-                        cloudTypeResultTextView.text = cloudName
+                        precipitationResultTextView.text =
+                            precipDescriptions[result.precipClass] ?: "Unknown"
+                        cloudTypeResultTextView.text =
+                            cloudNames[result.cloudType] ?: result.cloudType
+                    }
+
+                    resultBox.visibility = View.VISIBLE
+                    progressLoader.visibility = ProgressBar.GONE
+                    analyzeCloudButton.text = "Return to Camera"
+                    analyzeCloudButton.isEnabled = true
+
+                    analyzeCloudButton.setOnClickListener {
+                        // Simply return to camera without saving the image
+                        finish()
                     }
                 }
-
-                resultBox.visibility = View.VISIBLE
-                progressLoader.visibility = ProgressBar.GONE
-                analyzeCloudButton.text = "Return to Camera"
-                analyzeCloudButton.isEnabled = true
-
-                analyzeCloudButton.setOnClickListener {
-                    // Simply return to camera without saving the image
-                    finish()
-                }
-            }, 1000)
+            }
         }
     }
 
@@ -215,16 +219,24 @@ class AnalysisActivity : AppCompatActivity() {
 
     private fun loadBitmapFromUri(uri: Uri): Bitmap? {
         return try {
-            val inputStream = contentResolver.openInputStream(uri)
-            val bitmap = BitmapFactory.decodeStream(inputStream)
-            inputStream?.close()
+            // Bounds pass first so multi-megapixel photos are downsampled
+            // instead of decoded at full size (the model only sees 256x256)
+            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }
+            var sample = 1
+            while (bounds.outWidth / (sample * 2) >= MAX_DECODE_SIDE &&
+                bounds.outHeight / (sample * 2) >= MAX_DECODE_SIDE) sample *= 2
+            val options = BitmapFactory.Options().apply { inSampleSize = sample }
+            val bitmap = contentResolver.openInputStream(uri)?.use {
+                BitmapFactory.decodeStream(it, null, options)
+            } ?: return null
 
-            val input = contentResolver.openInputStream(uri)
-            val exif = ExifInterface(input!!)
-            val orientation = exif.getAttributeInt(
-                ExifInterface.TAG_ORIENTATION,
-                ExifInterface.ORIENTATION_NORMAL
-            )
+            val orientation = contentResolver.openInputStream(uri)?.use {
+                ExifInterface(it).getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL
+                )
+            } ?: ExifInterface.ORIENTATION_NORMAL
 
             when (orientation) {
                 ExifInterface.ORIENTATION_ROTATE_90 -> rotateBitmap(bitmap, 90f)
@@ -296,7 +308,14 @@ class AnalysisActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        tfliteInterpreter?.close()
+        // Let any in-flight analysis finish before freeing the interpreter it uses
+        analysisExecutor.execute { tfliteInterpreter?.close() }
+        analysisExecutor.shutdown()
         super.onDestroy()
+    }
+
+    companion object {
+        // Decode no smaller than this per side; plenty for the 256x256 model input
+        private const val MAX_DECODE_SIDE = 1024
     }
 }
