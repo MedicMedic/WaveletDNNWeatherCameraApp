@@ -40,4 +40,12 @@ class CloudClassifierTest {
     fun labelTablesStayAligned() {
         assertEquals(CloudClassifier.cloudTypes.size, CloudClassifier.precipClasses.size)
     }
+
+    @Test
+    fun everyCloudTypeHasAnInfoUrl() {
+        CloudClassifier.cloudTypes.forEach {
+            assertTrue(CloudClassifier.infoUrl(it)!!.startsWith("https://"))
+        }
+        assertNull(CloudClassifier.infoUrl("??"))
+    }
 }

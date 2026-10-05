@@ -21,3 +21,10 @@ local.properties
 *.apk
 *.aab
 /.idea/.name
+
+# Release signing
+keystore.properties
+*.jks
+*.keystore
+
+.kotlin/

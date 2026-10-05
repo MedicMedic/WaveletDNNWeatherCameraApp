@@ -8,6 +8,18 @@ object CloudClassifier {
     /** Precipitation level per cloud type, same order as [cloudTypes]. */
     val precipClasses = intArrayOf(1, 1, 0, 0, 0, 3, 1, 2, 1, 1)
 
+    private val wikiPages = mapOf(
+        "Ac" to "Altocumulus_cloud", "As" to "Altostratus_cloud",
+        "Cc" to "Cirrocumulus_cloud", "Cs" to "Cirrostratus_cloud",
+        "Ci" to "Cirrus_cloud", "Cb" to "Cumulonimbus_cloud",
+        "Cu" to "Cumulus_cloud", "Ns" to "Nimbostratus_cloud",
+        "Sc" to "Stratocumulus_cloud", "St" to "Stratus_cloud"
+    )
+
+    /** Web page describing a cloud type, or null for an unknown code. */
+    fun infoUrl(cloudType: String): String? =
+        wikiPages[cloudType]?.let { "https://en.wikipedia.org/wiki/$it" }
+
     /** Below this top-class probability the result is shown as a low-confidence guess. */
     const val LOW_CONFIDENCE = 0.5f
 

@@ -3,6 +3,9 @@ package com.example.cloudweather
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.graphics.Paint
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -118,6 +121,11 @@ class AnalysisActivity : AppCompatActivity() {
                     } else {
                         precipitationResultTextView.setText(precipStringRes(result.precipClass))
                         cloudTypeResultTextView.text = cloudName(result.cloudType)
+                        cloudTypeResultTextView.paintFlags =
+                            cloudTypeResultTextView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+                        cloudTypeResultTextView.setOnClickListener {
+                            openInfoPage(result.cloudType)
+                        }
                         confidenceTextView.text = getString(
                             R.string.confidence_format, (result.confidence * 100).toInt()
                         )
@@ -136,6 +144,15 @@ class AnalysisActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun openInfoPage(cloudType: String) {
+        val url = CloudClassifier.infoUrl(cloudType) ?: return
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(this, R.string.no_browser, Toast.LENGTH_SHORT).show()
         }
     }
 

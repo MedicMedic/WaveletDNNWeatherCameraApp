@@ -4,12 +4,23 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Cloud (kept inside the 66dp adaptive-icon safe zone): end caps, body and two bumps -->
+    <!-- Cloud, upper left: end caps, body and two bumps -->
     <path
         android:fillColor="#FFFFFFFF"
-        android:pathData="M29,59a7,7 0 1,1 14,0a7,7 0 1,1 -14,0z
-                          M65,59a7,7 0 1,1 14,0a7,7 0 1,1 -14,0z
-                          M36,52h36v14h-36z
-                          M36,48a10,10 0 1,1 20,0a10,10 0 1,1 -20,0z
-                          M47,44a13,13 0 1,1 26,0a13,13 0 1,1 -26,0z" />
+        android:pathData="M24,50.5a5,5 0 1,1 10,0a5,5 0 1,1 -10,0z
+                          M50,50.5a5,5 0 1,1 10,0a5,5 0 1,1 -10,0z
+                          M29,45.4h26v10.1h-26z
+                          M29,42.6a7.2,7.2 0 1,1 14.4,0a7.2,7.2 0 1,1 -14.4,0z
+                          M36.9,39.7a9.4,9.4 0 1,1 18.8,0a9.4,9.4 0 1,1 -18.8,0z" />
+    <!-- Magnifying glass, lower right: lens ring + rounded handle -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="4.5"
+        android:pathData="M56,66a11,11 0 1,1 22,0a11,11 0 1,1 -22,0z" />
+    <path
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"
+        android:pathData="M75.5,74.5L84,83" />
 </vector>

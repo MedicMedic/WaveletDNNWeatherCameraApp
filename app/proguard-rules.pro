@@ -22,4 +22,5 @@
 # TFLite / OpenCV are reached via JNI and reflection
 -keep class org.tensorflow.lite.** { *; }
 -keep class org.opencv.** { *; }
+-keep class com.google.ai.edge.litert.** { *; }
 -dontwarn org.tensorflow.lite.gpu.GpuDelegateFactory$Options

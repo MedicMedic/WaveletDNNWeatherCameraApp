@@ -6,6 +6,8 @@
     <string name="return_to_camera">Return to Camera</string>
     <string name="rain_likelihood_label">Likelihood of Rain</string>
     <string name="cloud_type_label">Cloud Type</string>
+    <string name="tap_for_info">Tap the cloud type to learn more</string>
+    <string name="no_browser">No app found to open the link</string>
     <string name="result_error">ERROR</string>
     <string name="confidence_format">Confidence: %1$d%%</string>
     <string name="low_confidence_note">Low confidence. Try a clearer photo of the sky.</string>

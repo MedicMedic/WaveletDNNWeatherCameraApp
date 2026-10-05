@@ -63,10 +63,23 @@
             android:id="@+id/cloud_type_result"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:drawableEnd="@drawable/ic_open_link"
+            android:drawablePadding="8dp"
+            android:drawableTint="#FFFFFF"
             android:text="@string/result_error"
             android:textColor="#FFFFFF"
             android:textSize="26sp"
             android:textStyle="bold"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/tap_for_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tap_for_info"
+            android:textColor="#AAAAAA"
+            android:textSize="12sp"
             android:gravity="center" />
 
         <TextView

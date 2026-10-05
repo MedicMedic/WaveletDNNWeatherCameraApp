@@ -1,7 +1,7 @@
 [versions]
-opencv = "4.10.0"
-agp = "8.7.3"
-cameraCore = "1.2.2"
+opencv = "4.13.0"
+agp = "8.13.2"
+cameraCore = "1.4.2"
 kotlin = "2.0.21"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -12,8 +12,7 @@ material = "1.12.0"
 activity = "1.9.3"
 constraintlayout = "2.2.0"
 exifinterface = "1.4.1"
-tensorflowLiteSupport = "0.4.4"
-tensorflowLite = "2.16.1"
+litert = "1.4.0"
 
 [libraries]
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }
@@ -29,8 +28,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
-tensorflow-lite-support = { module = "org.tensorflow:tensorflow-lite-support", version.ref = "tensorflowLiteSupport" }
-tensorflow-lite = { module = "org.tensorflow:tensorflow-lite", version.ref = "tensorflowLite" }
+litert = { module = "com.google.ai.edge.litert:litert", version.ref = "litert" }
 
 opencv = { module = "org.opencv:opencv", version.ref = "opencv" }
 

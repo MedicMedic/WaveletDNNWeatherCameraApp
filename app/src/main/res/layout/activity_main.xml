@@ -32,7 +32,8 @@
             android:layout_weight="1"
             android:text="@string/take_photo"
             app:icon="@drawable/ic_camera"
-            app:iconGravity="top"
+            app:iconGravity="textTop"
+            app:iconPadding="4dp"
             app:iconSize="28dp" />
 
         <com.google.android.material.button.MaterialButton
@@ -43,7 +44,8 @@
             android:layout_weight="1"
             android:text="@string/upload_button"
             app:icon="@drawable/ic_gallery"
-            app:iconGravity="top"
+            app:iconGravity="textTop"
+            app:iconPadding="4dp"
             app:iconSize="28dp" />
     </LinearLayout>
 
