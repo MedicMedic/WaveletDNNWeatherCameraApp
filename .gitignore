@@ -13,3 +13,11 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Local OpenCV SDK leftovers (now a Maven dependency)
+/opencv/
+
+# Build outputs / IDE
+*.apk
+*.aab
+/.idea/.name

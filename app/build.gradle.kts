@@ -54,11 +54,9 @@ dependencies {
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)
     implementation (libs.androidx.camera.lifecycle)
-    implementation (libs.androidx.camera.video)
 
     implementation (libs.androidx.camera.view)
-    implementation (libs.androidx.camera.extensions)
-    implementation(libs.tensorflow.lite.v290)
-    implementation(libs.tensorflow.lite.support.v042)
-    implementation(project(":opencv"))
+    implementation(libs.tensorflow.lite)
+    implementation(libs.tensorflow.lite.support)
+    implementation(libs.opencv)
 }

@@ -21,4 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "CloudWeather"
 include(":app")
-include(":opencv")
