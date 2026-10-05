@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+# TFLite / OpenCV are reached via JNI and reflection
+-keep class org.tensorflow.lite.** { *; }
+-keep class org.opencv.** { *; }
+-dontwarn org.tensorflow.lite.gpu.GpuDelegateFactory$Options

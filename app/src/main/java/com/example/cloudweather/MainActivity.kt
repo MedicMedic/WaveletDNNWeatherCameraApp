@@ -17,6 +17,9 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.example.cloudweather.databinding.ActivityMainBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -32,6 +35,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
+
+        // Edge-to-edge: keep the buttons clear of the nav bar / gesture area / cutouts
+        val bar = viewBinding.bottomBar
+        val basePadding = bar.paddingBottom
+        ViewCompat.setOnApplyWindowInsetsListener(bar) { v, insets ->
+            val sys = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            v.updatePadding(
+                left = basePadding + sys.left,
+                right = basePadding + sys.right,
+                bottom = basePadding + sys.bottom
+            )
+            insets
+        }
 
         if (allPermissionsGranted()) {
             startCamera()

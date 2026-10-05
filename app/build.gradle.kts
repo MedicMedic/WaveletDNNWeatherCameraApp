@@ -15,11 +15,18 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Ship only 64-bit ARM (phones) and x86_64 (emulator): the 32-bit
+        // OpenCV/TFLite natives roughly double the native payload
+        ndk {
+            abiFilters += listOf("arm64-v8a", "x86_64")
+        }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -32,6 +39,11 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+    }
+
+    androidResources {
+        // The model is memory-mapped via openFd(), so it must stay uncompressed
+        noCompress += "tflite"
     }
 
     buildFeatures {

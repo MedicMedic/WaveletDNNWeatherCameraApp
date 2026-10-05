@@ -9,6 +9,9 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.exifinterface.media.ExifInterface
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
@@ -71,6 +74,18 @@ class AnalysisActivity : AppCompatActivity() {
         imageView.setImageBitmap(originalBitmap)
 
         val analyzeCloudButton: Button = findViewById(R.id.read_notes_button)
+        // Edge-to-edge: lift the button above the nav bar / gesture area
+        ViewCompat.setOnApplyWindowInsetsListener(analyzeCloudButton) { v, insets ->
+            val sys = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            v.updateLayoutParams<android.view.ViewGroup.MarginLayoutParams> {
+                leftMargin = sys.left
+                rightMargin = sys.right
+                bottomMargin = sys.bottom
+            }
+            insets
+        }
         val progressLoader: ProgressBar = findViewById(R.id.progress_loader)
         val resultBox: View = findViewById(R.id.result_box)
         val precipitationResultTextView: TextView = findViewById(R.id.precipitation_result)

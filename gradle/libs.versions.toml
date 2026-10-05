@@ -2,7 +2,7 @@
 opencv = "4.10.0"
 agp = "8.7.3"
 cameraCore = "1.2.2"
-kotlin = "1.9.24"
+kotlin = "2.0.21"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -11,9 +11,9 @@ appcompat = "1.7.0"
 material = "1.12.0"
 activity = "1.9.3"
 constraintlayout = "2.2.0"
-exifinterface = "1.4.0-alpha01"
-tensorflowLiteSupport = "0.4.2"
-tensorflowLite = "2.9.0"
+exifinterface = "1.4.1"
+tensorflowLiteSupport = "0.4.4"
+tensorflowLite = "2.16.1"
 
 [libraries]
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }

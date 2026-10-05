@@ -14,22 +14,38 @@
         tools:layout_editor_absoluteX="34dp"
         tools:layout_editor_absoluteY="0dp" />
 
-    <Button
-        android:id="@+id/image_capture_button"
+    <LinearLayout
+        android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:text="@string/take_photo"
+        android:orientation="horizontal"
+        android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-    <Button
-        android:id="@+id/upload_image_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/upload_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/image_capture_button"
+            android:layout_width="0dp"
+            android:layout_height="88dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:text="@string/take_photo"
+            app:icon="@drawable/ic_camera"
+            app:iconGravity="top"
+            app:iconSize="28dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/upload_image_button"
+            android:layout_width="0dp"
+            android:layout_height="88dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:text="@string/upload_button"
+            app:icon="@drawable/ic_gallery"
+            app:iconGravity="top"
+            app:iconSize="28dp" />
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_centerline"
