@@ -34,7 +34,7 @@
             android:id="@+id/precipitation_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Likelihood of Rain"
+            android:text="@string/rain_likelihood_label"
             android:textColor="#AAAAAA"
             android:textSize="14sp"
             android:gravity="center" />
@@ -43,7 +43,7 @@
             android:id="@+id/precipitation_result"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ERROR"
+            android:text="@string/result_error"
             android:textColor="#FFFFFF"
             android:textSize="26sp"
             android:textStyle="bold"
@@ -54,7 +54,7 @@
             android:id="@+id/cloud_type_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cloud Type"
+            android:text="@string/cloud_type_label"
             android:textColor="#AAAAAA"
             android:textSize="14sp"
             android:gravity="center" />
@@ -63,11 +63,30 @@
             android:id="@+id/cloud_type_result"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ERROR"
+            android:text="@string/result_error"
             android:textColor="#FFFFFF"
             android:textSize="26sp"
             android:textStyle="bold"
             android:gravity="center" />
+
+        <TextView
+            android:id="@+id/confidence_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/low_confidence_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/low_confidence_note"
+            android:textColor="#FFC107"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:visibility="gone" />
 
     </LinearLayout>
 

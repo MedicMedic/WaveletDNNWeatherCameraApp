@@ -3,5 +3,30 @@
     <string name="take_photo">Take Photo</string>
     <string name="upload_button">Upload Image</string>
     <string name="read_notes">Analyze Image</string>
-    <string name="cloud_type_cumulus">Cloud type: Cumulus</string>
+    <string name="return_to_camera">Return to Camera</string>
+    <string name="rain_likelihood_label">Likelihood of Rain</string>
+    <string name="cloud_type_label">Cloud Type</string>
+    <string name="result_error">ERROR</string>
+    <string name="confidence_format">Confidence: %1$d%%</string>
+    <string name="low_confidence_note">Low confidence. Try a clearer photo of the sky.</string>
+    <string name="model_loaded">Cloud model loaded successfully!</string>
+    <string name="model_load_error">Error loading model: %1$s</string>
+    <string name="permission_denied">Permission request denied</string>
+    <string name="no_image_selected">No image selected</string>
+
+    <string name="precip_0">NO PRECIPITATION</string>
+    <string name="precip_1">LIGHT PRECIPITATION</string>
+    <string name="precip_2">MODERATE PRECIPITATION</string>
+    <string name="precip_3">HEAVY PRECIPITATION</string>
+
+    <string name="cloud_Ac">ALTOCUMULUS</string>
+    <string name="cloud_As">ALTOSTRATUS</string>
+    <string name="cloud_Cc">CIRROCUMULUS</string>
+    <string name="cloud_Cs">CIRROSTRATUS</string>
+    <string name="cloud_Ci">CIRRUS</string>
+    <string name="cloud_Cb">CUMULONIMBUS</string>
+    <string name="cloud_Cu">CUMULUS</string>
+    <string name="cloud_Ns">NIMBOSTRATUS</string>
+    <string name="cloud_Sc">STRATOCUMULUS</string>
+    <string name="cloud_St">STRATUS</string>
 </resources>

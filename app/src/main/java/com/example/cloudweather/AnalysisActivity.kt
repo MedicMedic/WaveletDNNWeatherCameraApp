@@ -28,29 +28,6 @@ class AnalysisActivity : AppCompatActivity() {
     private var originalBitmap: Bitmap? = null
     private val analysisExecutor = Executors.newSingleThreadExecutor()
 
-    // Cloud type mapping (order = training class order: sorted folder names)
-    private val cloudTypes = arrayOf("Ac", "As", "Cc", "Cs", "Ci", "Cb", "Cu", "Ns", "Sc", "St")
-    private val cloudNames = mapOf(
-        "Ac" to "ALTOCUMULUS",
-        "As" to "ALTOSTRATUS",
-        "Cc" to "CIRROCUMULUS",
-        "Cs" to "CIRROSTRATUS",
-        "Ci" to "CIRRUS",
-        "Cb" to "CUMULONIMBUS",
-        "Cu" to "CUMULUS",
-        "Ns" to "NIMBOSTRATUS",
-        "Sc" to "STRATOCUMULUS",
-        "St" to "STRATUS"
-    )
-
-    private val precipClasses = arrayOf(1, 1, 0, 0, 0, 3, 1, 2, 1, 1)
-    private val precipDescriptions = mapOf(
-        0 to "NO PRECIPITATION",
-        1 to "LIGHT PRECIPITATION",
-        2 to "MODERATE PRECIPITATION",
-        3 to "HEAVY PRECIPITATION"
-    )
-
     // StandardScaler parameters exported from training (one value per feature)
     private var featureMeans = DoubleArray(0)
     private var featureStds = DoubleArray(0)
@@ -79,10 +56,10 @@ class AnalysisActivity : AppCompatActivity() {
             Log.d(TAG, "Model output shape: ${outputTensor?.shape()?.contentToString()}")
 
             Log.d(TAG, "TFLite model loaded successfully!")
-            Toast.makeText(this, "Cloud model loaded successfully!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.model_loaded, Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Log.e(TAG, "Error loading TFLite model", e)
-            Toast.makeText(this, "Error loading model: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.model_load_error, e.message), Toast.LENGTH_LONG).show()
         }
 
         val imageUriString = intent.getStringExtra("image_uri")
@@ -98,6 +75,8 @@ class AnalysisActivity : AppCompatActivity() {
         val resultBox: View = findViewById(R.id.result_box)
         val precipitationResultTextView: TextView = findViewById(R.id.precipitation_result)
         val cloudTypeResultTextView: TextView = findViewById(R.id.cloud_type_result)
+        val confidenceTextView: TextView = findViewById(R.id.confidence_result)
+        val lowConfidenceNote: View = findViewById(R.id.low_confidence_note)
 
         analyzeCloudButton.setOnClickListener {
             progressLoader.visibility = ProgressBar.VISIBLE
@@ -114,28 +93,26 @@ class AnalysisActivity : AppCompatActivity() {
 
                 Log.d(TAG, "Feature vector size: ${features?.size ?: 0}")
 
-                val result = if (features == null || tfliteInterpreter == null) {
-                    Log.e(TAG, "Features empty or interpreter null")
-                    null
-                } else {
-                    classifyCloud(features).takeIf { it.precipClass >= 0 }
-                }
+                val result = features?.let { classifyCloud(it) }
 
                 runOnUiThread {
                     if (isDestroyed) return@runOnUiThread
                     if (result == null) {
-                        precipitationResultTextView.text = "ERROR"
-                        cloudTypeResultTextView.text = "ERROR"
+                        precipitationResultTextView.setText(R.string.result_error)
+                        cloudTypeResultTextView.setText(R.string.result_error)
                     } else {
-                        precipitationResultTextView.text =
-                            precipDescriptions[result.precipClass] ?: "Unknown"
-                        cloudTypeResultTextView.text =
-                            cloudNames[result.cloudType] ?: result.cloudType
+                        precipitationResultTextView.setText(precipStringRes(result.precipClass))
+                        cloudTypeResultTextView.text = cloudName(result.cloudType)
+                        confidenceTextView.text = getString(
+                            R.string.confidence_format, (result.confidence * 100).toInt()
+                        )
+                        lowConfidenceNote.visibility =
+                            if (result.isLowConfidence) View.VISIBLE else View.GONE
                     }
 
                     resultBox.visibility = View.VISIBLE
                     progressLoader.visibility = ProgressBar.GONE
-                    analyzeCloudButton.text = "Return to Camera"
+                    analyzeCloudButton.setText(R.string.return_to_camera)
                     analyzeCloudButton.isEnabled = true
 
                     analyzeCloudButton.setOnClickListener {
@@ -147,64 +124,42 @@ class AnalysisActivity : AppCompatActivity() {
         }
     }
 
-    private fun classifyCloud(features: DoubleArray): CloudPrediction {
-        Log.d(TAG, "Starting cloud classification with ${features.size} features")
-        Log.d(TAG, "Feature stats: min=${features.minOrNull()}, max=${features.maxOrNull()}")
+    private fun precipStringRes(precipClass: Int) = when (precipClass) {
+        0 -> R.string.precip_0
+        1 -> R.string.precip_1
+        2 -> R.string.precip_2
+        else -> R.string.precip_3
+    }
 
-        val modelInputSize = tfliteInterpreter?.getInputTensor(0)?.shape()?.get(1) ?: 0
+    private fun cloudName(code: String): String {
+        val id = resources.getIdentifier("cloud_$code", "string", packageName)
+        return if (id != 0) getString(id) else code
+    }
+
+    private fun classifyCloud(features: DoubleArray): CloudClassifier.Prediction? {
+        val interpreter = tfliteInterpreter ?: return null
+        val modelInputSize = interpreter.getInputTensor(0).shape()[1]
         if (features.size != modelInputSize ||
             featureMeans.size != modelInputSize || featureStds.size != modelInputSize) {
-            // A size mismatch means the extraction no longer matches training —
+            // A size mismatch means the extraction no longer matches training -
             // truncating/padding would silently feed the model garbage
             Log.e(TAG, "Size mismatch: features=${features.size}, " +
                     "means=${featureMeans.size}, stds=${featureStds.size}, " +
                     "model expects $modelInputSize")
-            return CloudPrediction("Error", -1, 0f)
+            return null
         }
 
-        // sklearn StandardScaler.transform: (x - mean) / std, no clamping
-        val inputFeatures = Array(1) {
-            FloatArray(modelInputSize) { i ->
-                ((features[i] - featureMeans[i]) / featureStds[i]).toFloat()
-            }
-        }
-
-        val outputSize = tfliteInterpreter?.getOutputTensor(0)?.shape()?.get(1) ?: 10
-        val outputProbabilities = Array(1) { FloatArray(outputSize) }
-
-        try {
-            Log.d(TAG, "Running TFLite inference...")
-            tfliteInterpreter?.run(inputFeatures, outputProbabilities)
-            Log.d(TAG, "Raw output: ${outputProbabilities[0].contentToString()}")
-
-            var maxIdx = 0
-            var maxProb = outputProbabilities[0][0]
-            for (i in outputProbabilities[0].indices) {
-                Log.d(TAG, "Class $i (${if (i < cloudTypes.size) cloudTypes[i] else "unknown"}): ${outputProbabilities[0][i]}")
-                if (outputProbabilities[0][i] > maxProb) {
-                    maxProb = outputProbabilities[0][i]
-                    maxIdx = i
-                }
-            }
-
-            Log.d(TAG, "Selected class: $maxIdx (${cloudTypes[maxIdx]}) with confidence $maxProb")
-
-            return CloudPrediction(
-                cloudType = cloudTypes[maxIdx],
-                precipClass = precipClasses[maxIdx],
-                confidence = maxProb
-            )
+        val input = arrayOf(CloudClassifier.standardize(features, featureMeans, featureStds))
+        val output = Array(1) { FloatArray(interpreter.getOutputTensor(0).shape()[1]) }
+        return try {
+            interpreter.run(input, output)
+            Log.d(TAG, "Raw output: ${output[0].contentToString()}")
+            CloudClassifier.predict(output[0])
         } catch (e: Exception) {
             Log.e(TAG, "Inference error: ${e.message}", e)
-            return CloudPrediction("Error", -1, 0f)
+            null
         }
     }
-
-    data class CloudPrediction(
-        val cloudType: String,
-        val precipClass: Int,
-        val confidence: Float
-    )
 
     private fun loadModelFile(): MappedByteBuffer {
         val assetManager = assets

@@ -75,9 +75,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    val msg = "Photo capture succeeded: ${output.savedUri}"
-                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-                    Log.d(TAG, msg)
+                    Log.d(TAG, "Photo capture succeeded: ${output.savedUri}")
 
                     val intent = Intent(this@MainActivity, AnalysisActivity::class.java).apply {
                         putExtra("image_uri", output.savedUri.toString())
@@ -125,7 +123,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val TAG = "NoteAnalyzer"
+        private const val TAG = "CloudWeather"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private val REQUIRED_PERMISSIONS =
             mutableListOf(
@@ -146,7 +144,7 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             val permissionGranted = permissions.entries.all { it.value }
             if (!permissionGranted) {
-                Toast.makeText(baseContext, "Permission request denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(baseContext, R.string.permission_denied, Toast.LENGTH_SHORT).show()
             } else {
                 startCamera()
             }
@@ -159,7 +157,7 @@ class MainActivity : AppCompatActivity() {
             }
             startActivity(intent)
         } else {
-            Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.no_image_selected, Toast.LENGTH_SHORT).show()
         }
     }
 }
